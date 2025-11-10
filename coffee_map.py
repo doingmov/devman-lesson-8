@@ -1,15 +1,12 @@
 import json
 import os
-
 import folium
 import requests
 from dotenv import load_dotenv
 from geopy import distance
 
-
 load_dotenv()
-API_KEY = os.getenv("API_KEY")
-
+api_key = os.getenv("API_KEY")
 
 def fetch_coordinates(api_key, address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
@@ -29,19 +26,19 @@ def fetch_coordinates(api_key, address):
     lon, lat = most_relevant["GeoObject"]["Point"]["pos"].split(" ")
     return lon, lat
 
-
 def get_distance(cafe):
     return cafe["distance"]
 
-
 def main():
-    with open("C:/Devman/coffeemap/coffee.json", "r") as my_file:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, "coffee.json")
+
+    with open(file_path, "r", encoding="cp1251") as my_file:
         coffee = json.load(my_file)
 
     city_user = input("Где вы находитесь? ")
-    coords_user = fetch_coordinates(API_KEY, city_user)
+    coords_user = fetch_coordinates(api_key, city_user)
     if coords_user is None:
-        print("Не удалось определить координаты. Проверьте название города.")
         return
 
     user_lon, user_lat = coords_user
@@ -64,7 +61,6 @@ def main():
     coffee_with_distance.sort(key=get_distance)
     nearest = coffee_with_distance[:5]
 
-    print(f"\nЕсли вы находитесь в {city_user}, ближайшие кофейни:")
     for cafe in nearest:
         print(cafe["title"])
 
@@ -85,7 +81,6 @@ def main():
         ).add_to(m)
 
     m.save("nearest_cafe_map.html")
-
 
 if __name__ == "__main__":
     main()
