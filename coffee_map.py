@@ -5,8 +5,6 @@ import requests
 from dotenv import load_dotenv
 from geopy import distance
 
-load_dotenv()
-api_key = os.getenv("API_KEY")
 
 def fetch_coordinates(api_key, address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
@@ -30,6 +28,8 @@ def get_distance(cafe):
     return cafe["distance"]
 
 def main():
+    load_dotenv()
+    api_key = os.getenv("API_KEY")
     script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(script_dir, "coffee.json")
 
@@ -84,3 +84,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
